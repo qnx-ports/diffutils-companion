@@ -1,0 +1,32 @@
+--- a/src/diff.c
++++ b/src/diff.c
+@@ -1480,9 +1480,18 @@
+ 	     safe to open and is likely to be opened anyway.
+ 	     Open the file now, as openat+fstat avoids an fstatat+openat race
+ 	     and might be a bit faster.  */
++#ifdef __QNX__
++    struct stat file_stat_qnx = {};
++    stat(nm, &file_stat_qnx);
++    int oflags_qnx = S_ISDIR(file_stat_qnx.st_mode) ? O_DIRECTORY : 0;
++    int accmode = ((O_PATH_DEFINED && !toplevel && detype[f] == DE_LNK
++			  && no_dereference_symlinks)
++			 ? O_PATHSEARCH : O_RDONLY) | oflags_qnx;
++#else
+ 	  int accmode = ((O_PATH_DEFINED && !toplevel && detype[f] == DE_LNK
+ 			  && no_dereference_symlinks)
+ 			 ? O_PATHSEARCH : O_RDONLY);
++#endif
+ 	  fd = openat (parentdesc, nm, accmode | oflags);
+ 	  if (fd < 0)
+ 	    {
+--- a/gnulib-tests/inet_pton.c
++++ b/gnulib-tests/inet_pton.c
+@@ -44,7 +44,7 @@
+ int
+ rpl_inet_pton (int af, const char *restrict src, void *restrict dst)
+ {
+-  return inet_pton (af, src, dst);
++  return __inet_pton (af, src, dst);
+ }
+ 
+ #else
