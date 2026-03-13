@@ -1,6 +1,6 @@
 pkgname=diffutils
 pkgver=3.12
-pkgrel=1
+pkgrel=${pkgrel:-0}
 pkgdesc="Show differences among files"
 subpackages="$pkgname-doc"
 url="https://www.gnu.org/software/diffutils/"
@@ -32,6 +32,7 @@ package() {
         make install DESTDIR=$pkgdir
 }
 
+options="$options ${DISABLE_CHECK:+!check}"
 sha512sums="
 10b17cf1dcdfa9ca0e5db91d62c4a079ebe9fd7eafa3aaebd4eb7e6206e4d753f348496622aa281e1bd7f7fcde65ce4a886dcc4acbb59332ef980f224197b4e4  diffutils-3.12.tar.xz
 ed54086a40ee41e42e889ed44df5bb43686907a7a3fcba8cb33c940196dc43e5a597afe9820e41a3649b3858513429f02b1b9a63a7ce0c5d03d6ec192cd6ab96  fix-qnx.patch
